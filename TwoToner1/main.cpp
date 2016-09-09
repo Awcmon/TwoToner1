@@ -85,7 +85,10 @@ int main(int argc, char *argv[])
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 
-	SDL_Window* window = SDL_CreateWindow("OpenGL", 0, 0, (int)((float)x*std::min(ratioX,ratioY)), (int)((float)y*std::min(ratioX, ratioY)), SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS);
+	int resX = (int)((float)x*std::min(ratioX, ratioY));
+	int resY = (int)((float)y*std::min(ratioX, ratioY));
+
+	SDL_Window* window = SDL_CreateWindow("OpenGL", 0, 0, resX, resY, SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS);
 	//SDL_Window* window = SDL_CreateWindow("OpenGL", 0, 0, 1920,1080, SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS);
 	SDL_GLContext context = SDL_GL_CreateContext(window);
 
@@ -198,7 +201,7 @@ int main(int argc, char *argv[])
 		}
 
 		GLint threshold = glGetUniformLocation(shaderProgram, "threshold");
-		glUniform1f(threshold, (float)mx/1920.0f);
+		glUniform1f(threshold, (float)mx/(float)resX);
 
 		// Clear the screen to black
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
