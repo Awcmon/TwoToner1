@@ -71,8 +71,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\ADDevZone-GP60\VisualStudio2015Libs\SDL2-2.0.3\include;D:\ADDevZone-GP60\VisualStudio2015Libs\vs_glew-1.13.0_dev_lib\include;D:\ADDevZone-GP60\CPPLibs\stb;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\ADDevZone-GP60\VisualStudio2015Libs\SDL2-2.0.3\lib\x86;D:\ADDevZone-GP60\VisualStudio2015Libs\vs_glew-1.13.0_dev_lib\lib\Release\Win32;$(LibraryPath)</LibraryPath>
+    <IncludePath>../../../CPPLibs/vs_SDL2-2.0.3\include;../../../CPPLibs/vs_glew-1.13.0_dev_lib\include;../../../CPPLibs\stb;$(IncludePath)</IncludePath>
+    <LibraryPath>../../../CPPLibs/vs_SDL2-2.0.3\lib\x86;../../../CPPLibs/vs_glew-1.13.0_dev_lib\lib\Release\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
