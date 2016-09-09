@@ -48,8 +48,12 @@ const GLchar* fragmentSource = GLSL(
 	in vec2 Texcoord;
 	out vec4 outColor;
 	uniform sampler2D tex;
+	uniform float threshold;
+
+	float sqrt3 = 1.73205080757;
+
 	void main() {
-		if (length(texture(tex, Texcoord).xyz) > 0.9)
+		if (length(texture(tex, Texcoord).xyz) > threshold*sqrt3)
 		{
 			outColor = vec4(0.6, 0.6, 0.6, 1.0);
 		}
@@ -82,6 +86,7 @@ int main(int argc, char *argv[])
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 
 	SDL_Window* window = SDL_CreateWindow("OpenGL", 0, 0, (int)((float)x*std::min(ratioX,ratioY)), (int)((float)y*std::min(ratioX, ratioY)), SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS);
+	//SDL_Window* window = SDL_CreateWindow("OpenGL", 0, 0, 1920,1080, SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS);
 	SDL_GLContext context = SDL_GL_CreateContext(window);
 
 	glewExperimental = GL_TRUE;
@@ -185,6 +190,15 @@ int main(int argc, char *argv[])
 		{
 			if (windowEvent.type == SDL_QUIT) break;
 		}
+
+		int mx, my;
+		if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT))
+		{
+			SDL_GetMouseState(&mx, &my);
+		}
+
+		GLint threshold = glGetUniformLocation(shaderProgram, "threshold");
+		glUniform1f(threshold, (float)mx/1920.0f);
 
 		// Clear the screen to black
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
