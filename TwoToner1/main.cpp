@@ -14,6 +14,13 @@
 #include <fstream>
 #include <streambuf>
 
+#include <chrono>
+
+#include <glm\glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
 /*List of libraries*******
 SDL2 //windowing and input
 GLEW //OpenGL Extentions
@@ -36,10 +43,13 @@ const GLchar* vertexSource = GLSL(
 	in vec2 texcoord;
 	out vec3 Color;
 	out vec2 Texcoord;
+
+	uniform mat4 scale;
+
 	void main() {
 		Color = vec3(1.0, 1.0, 1.0);
 		Texcoord = texcoord;
-		gl_Position = vec4(position, 0.0, 1.0);
+		gl_Position = scale * vec4(position, 0.0, 1.0);
 	}
 );
 
@@ -77,19 +87,45 @@ int main(int argc, char *argv[])
 	int x, y, n;
 	unsigned char *data = stbi_load(argv[1], &x, &y, &n, 4);
 
+	/*
 	float ratioX = 1920.0f / (float)x;
 	float ratioY = 1080.0f / (float)y;
+	int resX = (int)((float)x*std::min(ratioX, ratioY));
+	int resY = (int)((float)y*std::min(ratioX, ratioY));
+	*/
+
+	//float ratioX = xf / resX;
+	//float ratioY = yf / resY;
+	/*
+	float resX = 1920.0f;
+	float resY = 1080.0f;
+	float xf = (float)x;
+	float yf = (float)y;
+	float ratioX = resX/xf;
+	float ratioY = resY/yf;
+	float scaleX = resX/(xf*std::min(ratioX, ratioY));
+	float scaleY = resY/(yf*std::min(ratioX, ratioY));
+	*/
+
+	float ratioX = 1920.0f / (float)x;
+	float ratioY = 1080.0f / (float)y;
+	int resX = (int)((float)x*std::min(ratioX, ratioY));
+	int resY = (int)((float)y*std::min(ratioX, ratioY));
+	float scaleX = (float)resX / 1920.0f;
+	float scaleY = (float)resY / 1080.0f;
+
+	std::cout << resX << "\n";
+	std::cout << resY << "\n";
+	std::cout << scaleX << "\n";
+	std::cout << scaleY << "\n";
 
 	SDL_Init(SDL_INIT_VIDEO);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 
-	int resX = (int)((float)x*std::min(ratioX, ratioY));
-	int resY = (int)((float)y*std::min(ratioX, ratioY));
-
-	SDL_Window* window = SDL_CreateWindow("OpenGL", 0, 0, resX, resY, SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS);
-	//SDL_Window* window = SDL_CreateWindow("OpenGL", 0, 0, 1920,1080, SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS);
+	//SDL_Window* window = SDL_CreateWindow("OpenGL", 0, 0, resX, resY, SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS);
+	SDL_Window* window = SDL_CreateWindow("OpenGL", 0, 0, 1920,1080, SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS);
 	SDL_GLContext context = SDL_GL_CreateContext(window);
 
 	glewExperimental = GL_TRUE;
@@ -185,6 +221,11 @@ int main(int argc, char *argv[])
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+
+	// Calculate transformation
+	GLint uniScale = glGetUniformLocation(shaderProgram, "scale");
+	glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(scaleX, scaleY, 1.0f));
+	glUniformMatrix4fv(uniScale, 1, GL_FALSE, glm::value_ptr(scale));
 
 	SDL_Event windowEvent;
 	while (true)
