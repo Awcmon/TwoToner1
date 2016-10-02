@@ -14,8 +14,6 @@
 #include <fstream>
 #include <streambuf>
 
-#include <chrono>
-
 #include <glm\glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -87,32 +85,21 @@ int main(int argc, char *argv[])
 	int x, y, n;
 	unsigned char *data = stbi_load(argv[1], &x, &y, &n, 4);
 
-	/*
+	/* Window fits the entire pic to largest possible extent of the screen (1920x1080), nothing more
 	float ratioX = 1920.0f / (float)x;
 	float ratioY = 1080.0f / (float)y;
 	int resX = (int)((float)x*std::min(ratioX, ratioY));
 	int resY = (int)((float)y*std::min(ratioX, ratioY));
 	*/
-
-	//float ratioX = xf / resX;
-	//float ratioY = yf / resY;
-	/*
+	
 	float resX = 1920.0f;
 	float resY = 1080.0f;
 	float xf = (float)x;
 	float yf = (float)y;
 	float ratioX = resX/xf;
 	float ratioY = resY/yf;
-	float scaleX = resX/(xf*std::min(ratioX, ratioY));
-	float scaleY = resY/(yf*std::min(ratioX, ratioY));
-	*/
-
-	float ratioX = 1920.0f / (float)x;
-	float ratioY = 1080.0f / (float)y;
-	int resX = (int)((float)x*std::min(ratioX, ratioY));
-	int resY = (int)((float)y*std::min(ratioX, ratioY));
-	float scaleX = (float)resX / 1920.0f;
-	float scaleY = (float)resY / 1080.0f;
+	float scaleX = (xf*std::min(ratioX, ratioY))/resX;
+	float scaleY = (yf*std::min(ratioX, ratioY))/resY;
 
 	std::cout << resX << "\n";
 	std::cout << resY << "\n";
