@@ -63,14 +63,15 @@ const GLchar* fragmentSource = GLSL(
 	//x,y of center of rect
 	float sqrDistFromRect(vec2 p, vec2 r, float w, float h)
 	{
-		dx = max(abs(p.x - r.x) - width / 2.0, 0.0);
-		dy = max(abs(p.y - r.y) - height / 2.0, 0.0);
+		float dx = max(abs(p.x - r.x) - w / 2.0, 0.0);
+		float dy = max(abs(p.y - r.y) - h / 2.0, 0.0);
 		return dx * dx + dy * dy;
 	}
 
 	void main() {
 		//If within boundaries
-		if (length(vec2(0.5, 0.5) - Texcoord.xy) < 0.45)
+		float sqrdist = sqrDistFromRect(Texcoord.xy, vec2(0.5, 0.5), 0.7, 0.7);
+		if(sqrdist < 0.01)
 		{
 			//Colorize
 			if (length(texture(tex, Texcoord).xyz) > threshold*sqrt3)
@@ -85,7 +86,10 @@ const GLchar* fragmentSource = GLSL(
 		else 
 		{
 			//Colorize
-			if (length(texture(tex, Texcoord).xyz) > threshold*(1.0-length(vec2(0.5, 0.5) - Texcoord.xy)*1.9)*sqrt3)
+			//(1.0-(sqrdist*100.0))*threshold*sqrt3 is enough for going from 1 to 0 polynomially past the rounded rectangle's bounds
+			//sqrtdist - 0.01 is to compensate for the 0.1 dist buffer so we get distance from rounded rectangle rather than distance from rectangle. max takes care of the negative.
+			//having the fade go from 1.0 to 0.5 of threshold polynomially works much better visually
+			if (length(texture(tex, Texcoord).xyz) > (0.5+(0.5-(max(sqrdist-0.01,0)*50.0)))*threshold*sqrt3)
 			{
 				outColor = vec4(0.6, 0.6, 0.6, 1.0);
 			}
@@ -202,19 +206,19 @@ int main(int argc, char *argv[])
 	glShaderSource(vertexShader, 1, &vertexSource, NULL);
 	glCompileShader(vertexShader);
 
-	GLint success;
-	GLchar infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-
 	// Create and compile the fragment shader
 	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
 	glCompileShader(fragmentShader);
+
+	GLint success;
+	GLchar infoLog[512];
+	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+	}
 
 	// Link the vertex and fragment shader into a shader program
 	GLuint shaderProgram = glCreateProgram();
