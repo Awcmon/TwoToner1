@@ -60,6 +60,53 @@ const GLchar* fragmentSource = GLSL(
 
 	float sqrt3 = 1.73205080757;
 
+	//x,y of center of rect
+	float sqrDistFromRect(vec2 p, vec2 r, float w, float h)
+	{
+		dx = max(abs(p.x - r.x) - width / 2.0, 0.0);
+		dy = max(abs(p.y - r.y) - height / 2.0, 0.0);
+		return dx * dx + dy * dy;
+	}
+
+	void main() {
+		//If within boundaries
+		if (length(vec2(0.5, 0.5) - Texcoord.xy) < 0.45)
+		{
+			//Colorize
+			if (length(texture(tex, Texcoord).xyz) > threshold*sqrt3)
+			{
+				outColor = vec4(0.6, 0.6, 0.6, 1.0);
+			}
+			else
+			{
+				outColor = vec4(0.4, 0.4, 0.4, 1.0);
+			}
+		}
+		else 
+		{
+			//Colorize
+			if (length(texture(tex, Texcoord).xyz) > threshold*(1.0-length(vec2(0.5, 0.5) - Texcoord.xy)*1.9)*sqrt3)
+			{
+				outColor = vec4(0.6, 0.6, 0.6, 1.0);
+			}
+			else
+			{
+				outColor = vec4(0.4, 0.4, 0.4, 1.0);
+			}
+		}
+	}
+);
+
+/*
+const GLchar* fragmentSource = GLSL(
+	in vec3 Color;
+	in vec2 Texcoord;
+	out vec4 outColor;
+	uniform sampler2D tex;
+	uniform float threshold;
+
+	float sqrt3 = 1.73205080757;
+
 	void main() {
 		if (length(texture(tex, Texcoord).xyz) > threshold*sqrt3)
 		{
@@ -71,6 +118,7 @@ const GLchar* fragmentSource = GLSL(
 		}
 	}
 );
+*/
 
 int main(int argc, char *argv[])
 {
@@ -232,7 +280,7 @@ int main(int argc, char *argv[])
 		glUniform1f(threshold, (float)mx/(float)resX);
 
 		// Clear the screen to black
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.6f, 0.6f, 0.6f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// Draw a rectangle from the 2 triangles using 6 indices
