@@ -52,13 +52,24 @@ const GLchar* vertexSource = GLSL(
 );
 
 const GLchar* fragmentSource = GLSL(
+	//ins, outs
 	in vec3 Color;
 	in vec2 Texcoord;
 	out vec4 outColor;
 	uniform sampler2D tex;
 	uniform float threshold;
 
+	//constants
 	float sqrt3 = 1.73205080757;
+		//color settings
+	vec3 colFilled = vec3(0.4, 0.4, 0.4);
+	vec3 colBlank = vec3(0.6, 0.6, 0.6);
+	//vec3 colFilled = vec3(0.68235, 0.5921568627, 0.4666667);
+	//vec3 colBlank = vec3(0.7960784314, 0.7019607843, 0.568627451);
+		//vignette settings
+	float roundedRectW = 0.7;
+	float roundedRectH = 0.7;
+	float roundedRectRadius = 0.1; //radius beyond the rectangle
 
 	//x,y of center of rect
 	float sqrDistFromRect(vec2 p, vec2 r, float w, float h)
@@ -68,19 +79,25 @@ const GLchar* fragmentSource = GLSL(
 		return dx * dx + dy * dy;
 	}
 
+	float sqr(float a)
+	{
+		return a*a;
+	}
+
 	void main() {
-		//If within boundaries
-		float sqrdist = sqrDistFromRect(Texcoord.xy, vec2(0.5, 0.5), 0.7, 0.7);
-		if(sqrdist < 0.01)
+		//sqr'd dist from the rect at the center of the screen
+		float sqrdist = sqrDistFromRect(Texcoord.xy, vec2(0.5, 0.5), roundedRectW, roundedRectH);
+		//If within boundaries of rounded rectangle
+		if(sqrdist < sqr(roundedRectRadius))
 		{
 			//Colorize
 			if (length(texture(tex, Texcoord).xyz) > threshold*sqrt3)
 			{
-				outColor = vec4(0.6, 0.6, 0.6, 1.0);
+				outColor = vec4(colBlank, 1.0);
 			}
 			else
 			{
-				outColor = vec4(0.4, 0.4, 0.4, 1.0);
+				outColor = vec4(colFilled, 1.0);
 			}
 		}
 		else 
@@ -97,6 +114,9 @@ const GLchar* fragmentSource = GLSL(
 			{
 				outColor = vec4(0.4, 0.4, 0.4, 1.0);
 			}
+
+			//float tHold = (0.5 + (0.5 - (max(sqrdist - 0.01, 0)*80.0)))*threshold*sqrt3;
+			//outColor = vec4(tHold, tHold, tHold, 1.0);
 		}
 	}
 );
