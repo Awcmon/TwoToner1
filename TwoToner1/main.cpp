@@ -106,7 +106,8 @@ const GLchar* fragmentSource = GLSL(
 			//(1.0-(sqrdist*100.0))*threshold*sqrt3 is enough for going from 1 to 0 polynomially past the rounded rectangle's bounds
 			//sqrtdist - 0.01 is to compensate for the 0.1 dist buffer so we get distance from rounded rectangle rather than distance from rectangle. max takes care of the negative.
 			//having the fade go from 1.0 to 0.5 of threshold polynomially works much better visually
-			if (length(texture(tex, Texcoord).xyz) > (0.5+(0.5-(max(sqrdist-0.01,0)*50.0)))*threshold*sqrt3)
+			float tHold = (0.5 + (0.5 - (max(sqrdist - 0.01, 0)*80.0)))*threshold*sqrt3;
+			if (length(texture(tex, Texcoord).xyz) > tHold)
 			{
 				outColor = vec4(0.6, 0.6, 0.6, 1.0);
 			}
