@@ -6,6 +6,8 @@
 #include <GL/GLU.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+//#define STB_IMAGE_WRITE_IMPLEMENTATION
+//#include <stb_image_write.h>
 
 #include <iostream>
 #include <algorithm>
@@ -287,12 +289,24 @@ int main(int argc, char *argv[])
 	glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(scaleX, scaleY, 1.0f));
 	glUniformMatrix4fv(uniScale, 1, GL_FALSE, glm::value_ptr(scale));
 
-	SDL_Event windowEvent;
+	SDL_Event e;
 	while (true)
 	{
-		if (SDL_PollEvent(&windowEvent))
+		if (SDL_PollEvent(&e))
 		{
-			if (windowEvent.type == SDL_QUIT) break;
+			if (e.type == SDL_QUIT) 
+			{ 
+				break; 
+			}
+			else if (e.type == SDL_KEYDOWN) 
+			{ 
+				switch( e.key.keysym.sym ) 
+				{ 
+				case SDLK_s: 
+					std::cout << "fuk";
+					break; 
+				} 
+			}
 		}
 
 		int mx, my;
