@@ -316,7 +316,7 @@ int main(int argc, char *argv[])
 
 						for (int i = 0; i < 3 * 1920; i++)
 						{
-							flipped_pixel_data[j*1920*3 + i] = pixel_data[(1080-1-j)*1920*3 + i];
+							flipped_pixel_data[i*j] = pixel_data[i*j];
 						}
 					}
 
@@ -325,7 +325,6 @@ int main(int argc, char *argv[])
 					stbi_write_png("test.png", 1920, 1080, 3, flipped_pixel_data, 3*1920);
 
 					delete[] pixel_data;
-					delete[] flipped_pixel_data;
 					break; 
 				} 
 			}
