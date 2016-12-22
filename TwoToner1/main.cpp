@@ -147,6 +147,46 @@ const GLchar* fragmentSource = GLSL(
 );
 */
 
+char* flipVertically(const char* input, int w, int h, int bytesPerPixel)
+{
+
+}
+
+void savePNG(std::string name, int w, int h, int bytesPerPixel)
+{
+	char *pixelData = new char[bytesPerPixel * w * h];
+
+	glReadPixels(0, 0, 1920, 1080, GL_BGR, GL_UNSIGNED_BYTE, pixelData);
+
+	char *flippedPixelData = new char[bytesPerPixel * w * h];
+	for (int j = 0; j < h; j++)
+	{
+
+		for (int i = 0; i < bytesPerPixel * w; i++)
+		{
+			flippedPixelData[j * w * bytesPerPixel + i] = pixelData[(h - 1 - j) * w * bytesPerPixel + i];
+		}
+	}
+
+	/*funky result
+	char *flipped_pixel_data = new char[3 * 1920 * 1080];
+	for (int j = 0; j < 1080; j++)
+	{
+
+	for (int i = 0; i < 3 * 1920; i++)
+	{
+	flipped_pixel_data[i*j] = pixel_data[i*j];
+	}
+	}
+	*/
+
+	//int stbi_write_bmp(char const *filename, int w, int h, int comp, const void *data);
+	stbi_write_png(name.c_str(), w, h, 3, flippedPixelData, bytesPerPixel * w);
+
+	delete[] pixelData;
+	delete[] flippedPixelData;
+}
+
 int main(int argc, char *argv[])
 {
 	//const GLchar* vertexSource = readFromFile("twotone.vert").c_str();
@@ -303,41 +343,8 @@ int main(int argc, char *argv[])
 				switch( e.key.keysym.sym ) 
 				{ 
 				case SDLK_s: 
-					std::cout << "fuk";
-
-					char *pixel_data = new char[3 * 1920*1080];
-
-					//glReadBuffer(GL_FRONT);
-					glReadPixels(0, 0, 1920, 1080, GL_BGR, GL_UNSIGNED_BYTE, pixel_data);
-					
-					char *flipped_pixel_data = new char[3 * 1920 * 1080];
-					for (int j = 0; j < 1080; j++)
-					{
-
-						for (int i = 0; i < 3 * 1920; i++)
-						{
-							flipped_pixel_data[j*1920*3 + i] = pixel_data[(1080-1-j)*1920*3 + i];
-						}
-					}
-
-					/*funky result
-					char *flipped_pixel_data = new char[3 * 1920 * 1080];
-					for (int j = 0; j < 1080; j++)
-					{
-
-						for (int i = 0; i < 3 * 1920; i++)
-						{
-							flipped_pixel_data[i*j] = pixel_data[i*j];
-						}
-					}
-					*/
-
-
-					//int stbi_write_bmp(char const *filename, int w, int h, int comp, const void *data);
-					stbi_write_png("test.png", 1920, 1080, 3, flipped_pixel_data, 3*1920);
-
-					delete[] pixel_data;
-					delete[] flipped_pixel_data;
+					std::cout << "Saved";
+					savePNG("output.png", 1920, 1080, 3);
 					break; 
 				} 
 			}
