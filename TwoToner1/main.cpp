@@ -309,7 +309,18 @@ int main(int argc, char *argv[])
 
 					//glReadBuffer(GL_FRONT);
 					glReadPixels(0, 0, 1920, 1080, GL_BGR, GL_UNSIGNED_BYTE, pixel_data);
+					
+					char *flipped_pixel_data = new char[3 * 1920 * 1080];
+					for (int j = 0; j < 1080; j++)
+					{
 
+						for (int i = 0; i < 3 * 1920; i++)
+						{
+							flipped_pixel_data[j*1920*3 + i] = pixel_data[(1080-1-j)*1920*3 + i];
+						}
+					}
+
+					/*funky result
 					char *flipped_pixel_data = new char[3 * 1920 * 1080];
 					for (int j = 0; j < 1080; j++)
 					{
@@ -319,12 +330,14 @@ int main(int argc, char *argv[])
 							flipped_pixel_data[i*j] = pixel_data[i*j];
 						}
 					}
+					*/
 
 
 					//int stbi_write_bmp(char const *filename, int w, int h, int comp, const void *data);
 					stbi_write_png("test.png", 1920, 1080, 3, flipped_pixel_data, 3*1920);
 
 					delete[] pixel_data;
+					delete[] flipped_pixel_data;
 					break; 
 				} 
 			}
