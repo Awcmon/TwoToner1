@@ -6,8 +6,8 @@
 #include <GL/GLU.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-//#define STB_IMAGE_WRITE_IMPLEMENTATION
-//#include <stb_image_write.h>
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb_image_write.h>
 
 #include <iostream>
 #include <algorithm>
@@ -304,6 +304,16 @@ int main(int argc, char *argv[])
 				{ 
 				case SDLK_s: 
 					std::cout << "fuk";
+
+					char *pixel_data = new char[3 * 1920*1080];
+
+					//glReadBuffer(GL_FRONT);
+					glReadPixels(0, 0, 1920, 1080, GL_BGR, GL_UNSIGNED_BYTE, pixel_data);
+
+					//int stbi_write_bmp(char const *filename, int w, int h, int comp, const void *data);
+					stbi_write_png("test.png", 1920, 1080, 3, pixel_data, 3*1920);
+
+					delete[] pixel_data;
 					break; 
 				} 
 			}
