@@ -298,7 +298,7 @@ int main(int argc, char *argv[])
 			{ 
 				break; 
 			}
-			else if (e.type == SDL_KEYDOWN) 
+			else if (e.type == SDL_KEYUP) 
 			{ 
 				switch( e.key.keysym.sym ) 
 				{ 
