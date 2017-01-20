@@ -329,14 +329,17 @@ int main(int argc, char *argv[])
 	glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(scaleX, scaleY, 1.0f));
 	glUniformMatrix4fv(uniScale, 1, GL_FALSE, glm::value_ptr(scale));
 
+	bool run = true;
+
 	SDL_Event e;
-	while (true)
+	while (run)
 	{
 		if (SDL_PollEvent(&e))
 		{
 			if (e.type == SDL_QUIT) 
 			{ 
-				break; 
+				run = false;
+				//break; 
 			}
 			else if (e.type == SDL_KEYUP) 
 			{ 
@@ -346,6 +349,9 @@ int main(int argc, char *argv[])
 					std::cout << "Saved";
 					savePNG("output.png", 1920, 1080, 3);
 					break; 
+				case SDLK_ESCAPE:
+					run = false;
+					break;
 				} 
 			}
 		}
